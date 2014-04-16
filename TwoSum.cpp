@@ -86,6 +86,30 @@ double findMedianHelper(int A[],int m,int B[],int n,int left,int right);
     	}
     }
 
+    int lengthOfLongestSubstring(string s) {
+    	map<char,int> recordMap;
+		int len=0;
+		int index=0,start=0;
+		while(index<s.length()){
+			map<char,int>::iterator iter=recordMap.find(s[index]);
+			if(iter==recordMap.end()){
+				recordMap.insert(std::pair<char,int>(s[index],index));
+			}else if(iter->second<start){
+				iter->second=index;
+			}else{
+				int firstIndex=iter->second;
+				int tempLen=index-start;
+				iter->second=index;
+				len=max(len,tempLen);
+				start=firstIndex+1;
+			}
+			index++;
+		}
+
+
+		return max(len,index-start);
+    }
+
 
 
 int main(){
