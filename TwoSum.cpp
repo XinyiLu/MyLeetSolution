@@ -7,11 +7,12 @@
 #include <stdio.h>
 #include <vector>
 #include <map>
-
+#include <iostream>
 
 using namespace std;
-class TwoSum {
-public:
+double findMedianFromOneArray(int A[],int m);
+double findMedianHelper(int A[],int m,int B[],int n,int left,int right);
+
     vector<int> twoSum(vector<int> &numbers, int target) {
 
     	vector<int> indices(2,0);
@@ -38,6 +39,58 @@ public:
 
 		return indices;
     }
-};
+
+    double findMedianSortedArrays(int A[], int m, int B[], int n) {
+    	if(m==0||n==0){
+    		return (n==0)?findMedianFromOneArray(A,m):findMedianFromOneArray(B,n);
+    	}
+    	int mid=(m+n)/2;
+
+    	return findMedianHelper(A,m,B,n,max(0,m-mid-1),min(m-1,mid));
+    }
+
+    double findMedianHelper(int A[],int m,int B[],int n,int left,int right){
+    	int midA=(left+right)/2;
+    	int mid=(m+n)/2;
+    	int bindex=mid-midA-1;
+
+    	if(left>right){
+    		return findMedianHelper(B,n,A,m,max(0,n-mid-1),min(n-1,mid));
+    	}
+    	else if((bindex==-1&&A[midA]<=B[0])||(A[midA]>=B[bindex]&&(bindex==n-1||B[bindex+1]>=A[midA]))){
+    		if((m+n)%2==1){
+				return A[midA];
+			}else{
+				int bindex=mid-midA-1;
+				if(bindex<0||(midA>0&&A[midA-1]>=B[bindex])){
+					return (A[midA]+A[midA-1])/2.0;
+				}else{
+					return (A[midA]+B[bindex])/2.0;
+				}
+			}
+    	}
+    	else if((bindex==-1&&A[midA]>B[0])||(A[midA]>=B[bindex]&&B[bindex+1]<A[midA])){
+    		return findMedianHelper(A,m,B,n,left,midA-1);
+    	}else{
+    		return findMedianHelper(A,m,B,n,midA+1,right);
+    	}
+
+    }
+
+    double findMedianFromOneArray(int A[],int m){
+    	int mid=m/2;
+    	if(m%2==1){
+    		return A[mid];
+    	}else{
+    		return (A[mid-1]+A[mid])/2.0;
+    	}
+    }
 
 
+
+int main(){
+
+    	int array1[]={3},array2[]={1,2};
+    	cout<<findMedianSortedArrays(array1,1,array2,2)<<endl;
+
+}
